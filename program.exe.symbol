@@ -1,0 +1,60 @@
+< THE SYMBOL TABLE >  program.exe  --  emu8086 assembler version: 4.08 
+===================================================================================================
+Name                     	Offset    	Size      	Type      	Segment   
+===================================================================================================
+DATA                     	00000     	-5        	SEGMENT   	(ITSELF)  
+S                        	00000     	1         	VAR       	data      
+K                        	00040     	2         	VAR       	data      
+WELCOME                  	00140     	1         	VAR       	data      
+MSGIN                    	0015F     	1         	VAR       	data      
+MSGOUT                   	00167     	1         	VAR       	data      
+INPUT                    	0016F     	1         	VAR       	data      
+OUTPUT                   	00183     	2         	VAR       	data      
+BLOCK                    	00193     	1         	VAR       	data      
+LENGTH                   	001D3     	1         	VAR       	data      
+A0                       	001D4     	2         	VAR       	data      
+B0                       	001D8     	2         	VAR       	data      
+C0                       	001DC     	2         	VAR       	data      
+D0                       	001E0     	2         	VAR       	data      
+A                        	001E4     	2         	VAR       	data      
+B                        	001E8     	2         	VAR       	data      
+C                        	001EC     	2         	VAR       	data      
+D                        	001F0     	2         	VAR       	data      
+F                        	001F4     	2         	VAR       	data      
+G                        	001F8     	2         	VAR       	data      
+TEMPRESULT               	001FA     	2         	VAR       	data      
+NBIT                     	001FE     	1         	VAR       	data      
+STACK                    	00020     	-5        	SEGMENT   	(ITSELF)  
+CODE                     	00030     	-5        	SEGMENT   	(ITSELF)  
+START                    	00000     	-1        	LABEL     	code      
+LAP                      	00049     	-1        	LABEL     	code      
+NHOHON16                 	0004B     	-1        	LABEL     	code      
+NHOHON32                 	0007B     	-1        	LABEL     	code      
+NHOHON48                 	000B7     	-1        	LABEL     	code      
+NHOHON63                 	000ED     	-1        	LABEL     	code      
+DONE                     	0011D     	-1        	LABEL     	code      
+NHAPDULIEU               	0022C     	-1        	NEAR      	code      
+NHAP                     	00235     	-1        	LABEL     	code      
+THOAT                    	0024D     	-1        	LABEL     	code      
+XUATDULIEU               	0024E     	-1        	NEAR      	code      
+INBYTE                   	0025A     	-1        	LABEL     	code      
+HEXLOOP                  	00261     	-1        	LABEL     	code      
+KYTU                     	00278     	-1        	LABEL     	code      
+INHEX                    	0027E     	-1        	LABEL     	code      
+TAOBLOCK                 	0028D     	-1        	NEAR      	code      
+DEM                      	00290     	-1        	LABEL     	code      
+DUNG                     	002A2     	-1        	LABEL     	code      
+QUAY_NBIT                	002B3     	-1        	NEAR      	code      
+QUAY                     	002C1     	-1        	LABEL     	code      
+USART_INIT               	002DD     	-1        	NEAR      	code      
+USART_READ               	002E6     	-1        	NEAR      	code      
+RL1                      	002E6     	-1        	LABEL     	code      
+USART_WRITE              	002F1     	-1        	NEAR      	code      
+WL1                      	002F4     	-1        	LABEL     	code      
+USART_WRITE_STR          	00300     	-1        	NEAR      	code      
+SWLOOP                   	00300     	-1        	LABEL     	code      
+SWDONE                   	0030A     	-1        	LABEL     	code      
+===================================================================================================
+[ 6/13/2018  --  10:01:11 AM ] 
+< END >
+ 

@@ -1,0 +1,109 @@
+\documentclass[12pt]{report}
+\usepackage{graphicx}
+\usepackage[utf8]{vietnam}
+\usepackage[left=2cm, right=2cm, top=2cm, bottom=2cm]{geometry}
+\usepackage{subfiles}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{fancybox}
+\usepackage{etoolbox}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{cases}
+\usepackage{array}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{multirow}
+\usepackage{booktabs}
+\newcommand{\tabitem}{~~\llap{\textbullet}~~}
+
+\usepackage[nottoc,notlof,notlot]{tocbibind} 
+\renewcommand\bibname{References}
+
+% Link color setup
+\hypersetup{
+	colorlinks = true,
+	linkcolor = black,
+	citecolor = blue
+}
+
+% Change format of page
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead{}
+\fancyfoot{}
+\fancyhead[L]{Cài đặt thuật toán MD5 trên vi xử lý 8086}
+\fancyfoot[L]{}
+\fancyfoot[R]{\thepage}
+\renewcommand{\headrulewidth}{1pt}
+\renewcommand{\footrulewidth}{1pt}
+
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
+
+% format
+\usepackage{titlesec}
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\ttlh@hang}{\parindent\z@}{\parindent\z@\leavevmode}{}{}
+\patchcmd{\ttlh@hang}{\noindent}{}{}{}
+\makeatother
+
+\titleformat{\subsection}
+{\normalfont\large\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}
+{\normalfont\large\sffamily\bfseries}{\thesubsubsection}{1em}{}
+
+% tab command
+\newcommand\tab[1][1cm]{\hspace*{#1}}
+
+\begin{document}
+
+\subfile{sections/title-page.tex}
+
+\pagenumbering{gobble}
+\tableofcontents 
+\newpage
+
+\pagenumbering{arabic}
+\newpage
+\setcounter{page}{1}
+
+\section{Tổng quan vi xử lý 8086}
+\subfile{sections/gioithieu.tex}
+
+\section{Giao tiếp với 8251}
+\subfile{sections/connect.tex}
+
+\section{Thuật toán MD5}
+\subfile{sections/task.tex}
+
+\section{Các thuật toán phụ trợ thao tác với số 32 bit}
+\subfile{sections/function.tex}
+
+\section{Kết quả}
+\subfile{sections/conclusion.tex}
+
+\begin{thebibliography}{9}
+	\bibitem{latexcompanion} 
+	NGÔ LAM TRUNG
+	\textit{Slide bài giảng kĩ thuật vi xử lý}. 
+
+	\bibitem{latexcompanion} 
+	\href{https://en.wikipedia.org/wiki/MD5}
+	\textit{Thuật toán MD5 - https://en.wikipedia.org/wiki/MD5}
+
+	\bibitem{latexcompanion} 
+	PHẠM HOÀNG DUY \& HOÀNG XUÂN DẬU
+	\textit{Slide bài giảng kĩ thuật vi xử lý (PTIT)}. 
+
+
+
+
+	
+\end{thebibliography}
+
+\end{document}

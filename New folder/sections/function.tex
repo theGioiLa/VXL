@@ -1,0 +1,23 @@
+\documentclass[../report.tex]{subfiles}
+\begin{document}
+\subsection{Cộng hai số 32 bit}
+Với 8086, các thanh ghi đều là 16 bit, do đó sẽ không có một phép toán nào hỗ trợ trực tiếp cho chúng ta phép cộng đối với số 32 bit.
+Để cộng 2 số 32 bit với nhau ta sẽ sử dụng 2 thanh ghi AX, DX và một biến $kq$ (4 byte) để lưu kết quả ra bộ nhớ. Thủ tục cộng 32 bit được thực hiện như sau:
+\begin{enumerate}
+    \item Gán 16-bit thấp của mỗi số hạng vào thanh ghi AX và DX
+    \item Thực hiện cộng hai thanh ghi AX và DX theo lệnh $add \textbf{AX}, \textbf{DX}$ $\rightarrow$ kết quả sẽ lưu vào AX
+    \item Đưa giá trị của AX ra byte 16-bit của biến $kq$
+    \item Gán byte cao của mỗi số hạng vào thanh ghi AX và DX
+    \item Thực hiện cộng hai thanh ghi AX và DX theo lệnh $adc \textbf{AX}, \textbf{DX}$ $\rightarrow$ kết quả sẽ lưu vào AX
+    \item Đưa giá trị của AX ra 16-bit cao của biến $kq$
+\end{enumerate}
+\subsection{Quay trái}
+Đối với lệnh quay trái, ta thực hiện như sau:
+\begin{enumerate}
+    \item Gán 16-bit thấp, 16-bit cao của số 32 bit vào AX, DX
+    \item Thực hiện dịch trái 1 bit đối với AX và DX. Lưu lại bit được dịch lần lượt vào BH và BL
+    \item Tiến hành cộng AL với BL và DL với BH ta sẽ thu được kết quả của phép xoay trái 1 bit của số 32 bit với 16 bit cao ở DX và 16 bit thấp ở AX
+\end{enumerate}
+Khi thực hiện quay n bit thì ta chỉ cần lặp lại thủ tục trên n lần.
+
+\end{document}

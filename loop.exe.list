@@ -1,0 +1,721 @@
+EMU8086 GENERATED LISTING. MACHINE CODE <- SOURCE.
+ 
+loop.exe -- emu8086 assembler version: 4.08  
+ 
+[ 6/13/2018  --  10:15:56 AM ] 
+ 
+===================================================================================================
+[LINE]     LOC: MACHINE CODE                          SOURCE
+===================================================================================================
+ 
+[   1]        :                                       ;Chu y khi thuc hien thuat toan:
+[   2]        :                                       ;+ Khoi tao:
+[   3]        :                                       ;    Block 512-bit co cau truc:
+[   4]        :                                       ;        msg|_|_|...|_|_|_|_|_|_|_|_|
+[   5]        :                                       ;       <----448----><------8------->
+[   6]        :                                       ;       8-bit cuoi co dang low -> high:  chieu dai cua msg mod 2^64
+[   7]        :                                       ;       k len khai bao nhu duoi
+[   8]        :                                       ;
+[   9]        :                                       data segment
+[  10]        :                                       ; constant
+[  11]        :                                       USART_CMD  Equ 2
+[  12]        :                                       USART_DATA Equ 0
+[  13]        :                                       
+[  14]    0000: 07 0C 11 16 07 0C 11 16 07 0C 11 16   s db 7, 12, 17, 22,  7, 12, 17, 22,  7, 12, 17, 22,  7, 12, 17, 22  ; round0
+                07 0C 11 16                         
+[  15]    0010: 05 09 0E 14 05 09 0E 14 05 09 0E 14   db 5,  9, 14, 20,  5,  9, 14, 20,  5,  9, 14, 20,  5,  9, 14, 20  ; round1
+                05 09 0E 14                         
+[  16]    0020: 04 0B 10 17 04 0B 10 17 04 0B 10 17   db 4, 11, 16, 23,  4, 11, 16, 23,  4, 11, 16, 23,  4, 11, 16, 23  ; round2
+                04 0B 10 17                         
+[  17]    0030: 06 0A 0F 15 06 0A 0F 15 06 0A 0F 15   db 6, 10, 15, 21,  6, 10, 15, 21,  6, 10, 15, 21,  6, 10, 15, 21  ; round3
+                06 0A 0F 15                         
+[  18]        :                                       
+[  19]    0040: 78 A4 6A D7 56 B7 C7 E8 DB 70 20 24   K dd 0d76aa478h, 0e8c7b756h, 0242070dbh, 0c1bdceeeh    ; 0... 3
+                EE CE BD C1                         
+[  20]    0050: AF 0F 7C F5 2A C6 87 47 13 46 30 A8   dd 0f57c0fafh, 04787c62ah, 0a8304613h, 0fd469501h    ; 4... 7
+                01 95 46 FD                         
+[  21]    0060: D8 98 80 69 AF F7 44 8B B1 5B FF FF   dd 0698098d8h, 08b44f7afh, 0ffff5bb1h, 0895cd7beh    ; 8... 11
+                BE D7 5C 89                         
+[  22]    0070: 22 11 90 6B 93 71 98 FD 8E 43 79 A6   dd 06b901122h, 0fd987193h, 0a679438eh, 049b40821h    ; 12...15
+                21 08 B4 49                         
+[  23]    0080: 62 25 1E F6 40 B3 40 C0 51 5A 5E 26   dd 0f61e2562h, 0c040b340h, 0265e5a51h, 0e9b6c7aah    ; 16...19
+                AA C7 B6 E9                         
+[  24]    0090: 5D 10 2F D6 53 14 44 02 81 E6 A1 D8   dd 0d62f105dh, 002441453h, 0d8a1e681h, 0e7d3fbc8h    ; 20...23
+                C8 FB D3 E7                         
+[  25]    00A0: E6 CD E1 21 D6 07 37 C3 87 0D D5 F4   dd 021e1cde6h, 0c33707d6h, 0f4d50d87h, 0455a14edh    ; 24...27
+                ED 14 5A 45                         
+[  26]    00B0: 05 E9 E3 A9 F8 A3 EF FC D9 02 6F 67   dd 0a9e3e905h, 0fcefa3f8h, 0676f02d9h, 08d2a4c8ah    ; 28...31
+                8A 4C 2A 8D                         
+[  27]    00C0: 42 39 FA FF 81 F6 71 87 22 61 9D 6D   dd 0fffa3942h, 08771f681h, 06d9d6122h, 0fde5380ch    ; 32...35
+                0C 38 E5 FD                         
+[  28]    00D0: 44 EA BE A4 A9 CF DE 4B 60 4B BB F6   dd 0a4beea44h, 04bdecfa9h, 0f6bb4b60h, 0bebfbc70h    ; 36...39
+                70 BC BF BE                         
+[  29]    00E0: C6 7E 9B 28 FA 27 A1 EA 85 30 EF D4   dd 0289b7ec6h, 0eaa127fah, 0d4ef3085h, 004881d05h    ; 40...43
+                05 1D 88 04                         
+[  30]    00F0: 39 D0 D4 D9 E5 99 DB E6 F8 7C A2 1F   dd 0d9d4d039h, 0e6db99e5h, 01fa27cf8h, 0c4ac5665h    ; 44...47
+                65 56 AC C4                         
+[  31]    0100: 44 22 29 F4 97 FF 2A 43 A7 23 94 AB   dd 0f4292244h, 0432aff97h, 0ab9423a7h, 0fc93a039h    ; 48...51
+                39 A0 93 FC                         
+[  32]    0110: C3 59 5B 65 92 CC 0C 8F 7D F4 EF FF   dd 0655b59c3h, 08f0ccc92h, 0ffeff47dh, 085845dd1h    ; 52...55
+                D1 5D 84 85                         
+[  33]    0120: 4F 7E A8 6F E0 E6 2C FE 14 43 01 A3   dd 06fa87e4fh, 0fe2ce6e0h, 0a3014314h, 04e0811a1h    ; 56...59
+                A1 11 08 4E                         
+[  34]    0130: 82 7E 53 F7 35 F2 3A BD BB D2 D7 2A   dd 0f7537e82h, 0bd3af235h, 02ad7d2bbh, 0eb86d391h    ; 60...63
+                91 D3 86 EB                         
+[  35]        :                                       
+[  36]        :                                       ; ======= I/O =========
+[  37]    0140: 20 2D 2D 2D 51 75 61 6E 67 20 51 75   welcome db ' ---Quang Quý - 20153108 ---', 13, 10, 0
+                FD 20 2D 20 32 30 31 35 33 31 30 38 
+                20 2D 2D 2D 0D 0A 00                
+[  38]    015F: 49 6E 70 75 74 3A 20 00               msgIn   db 'Input: ', 0
+[  39]    0167: 20 20 4D 44 35 3A 20 00               msgOut  db '  MD5: ', 0
+[  40]    016F: 00 00 00 00 00 00 00 00 00 00 00 00   input   db 20 dup(?)
+                00 00 00 00 00 00 00 00             
+[  41]    0183: 01 00 01 00 01 00 01 00 01 00 01 00   output  dw 8 dup(1)
+                01 00 01 00                         
+[  42]    0193: 00 00 00 00 00 00 00 00 00 00 00 00   block   db 64 dup(0)
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00                         
+[  43]        :                                       
+[  44]        :                                       ; Khoi tao a0, b0, c0, d0 (little-edian)
+[  45]    01D3: 01 23 45 67                           a0 dw 02301h, 06745h
+[  46]    01D7: 89 AB CD EF                           b0 dw 0ab89h, 0efcdh
+[  47]    01DB: FE DC BA 98                           c0 dw 0dcfeh, 098bah
+[  48]    01DF: 76 54 32 10                           d0 dw 05476h, 01032h
+[  49]        :                                       
+[  50]        :                                       ; buffer cua nguon
+[  51]    01E3: 00 00 00 00                           a dd ?
+[  52]    01E7: 00 00 00 00                           b dd ?
+[  53]    01EB: 00 00 00 00                           c dd ?
+[  54]    01EF: 00 00 00 00                           d dd ?
+[  55]        :                                       
+[  56]    01F3: 00 00 00 00                           F dd ?
+[  57]    01F7: 00 00                                 g dw ?
+[  58]    01F9: 00 00 00 00                           tempResult dd ?
+[  59]        :                                       
+[  60]        :                                       ; so bit quay
+[  61]    01FD: 00                                    nbit db ?
+[  62]        :                                       
+[  63]        :                                       ends
+[  64]        :                                       
+[  65]        :                                       stack segment
+[  66]    0200: 00 00 00 00 00 00 00 00 00 00 00 00   dw 128 dup(?)
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                00 00 00 00                         
+[  67]        :                                       ends
+[  68]        :                                       
+[  69]        :                                       code segment
+[  70]    0300:                                       start:
+[  71]        :                                       
+[  72]        :                                       ; add your code here
+[  73]    0300: B8 00 00                              mov ax, data
+[  74]    0303: 8E D8                                 mov ds, ax
+[  75]    0305: 8E C0                                 mov es, ax
+[  76]        :                                       
+[  77]    0307: E8 05 03                              call USART_Init
+[  78]    030A: BE 40 01                              mov si, offset welcome
+[  79]    030D: E8 22 03                              call USART_Write_Str
+[  80]        :                                       
+[  81]    0310:                                       begin:
+[  82]        :                                       
+[  83]    0310: E8 1F 02                              call nhapDuLieu
+[  84]    0313: E8 7D 02                              call taoBlock
+[  85]        :                                       
+[  86]        :                                       ; Thuat toan
+[  87]        :                                       
+[  88]        :                                       ; Khoi tao a, b, c, d
+[  89]    0316: A1 D3 01                              mov ax, a0[0]
+[  90]    0319: A3 E3 01                              mov a[0], ax
+[  91]    031C: A1 D5 01                              mov ax, a0[2]
+[  92]    031F: A3 E5 01                              mov a[2], ax
+[  93]        :                                       
+[  94]    0322: A1 D7 01                              mov ax, b0[0]
+[  95]    0325: A3 E7 01                              mov b[0], ax
+[  96]    0328: A1 D9 01                              mov ax, b0[2]
+[  97]    032B: A3 E9 01                              mov b[2], ax
+[  98]        :                                       
+[  99]    032E: A1 DB 01                              mov ax, c0[0]
+[ 100]    0331: A3 EB 01                              mov c[0], ax
+[ 101]    0334: A1 DD 01                              mov ax, c0[2]
+[ 102]    0337: A3 ED 01                              mov c[2], ax
+[ 103]        :                                       
+[ 104]    033A: A1 DF 01                              mov ax, d0[0]
+[ 105]    033D: A3 EF 01                              mov d[0], ax
+[ 106]    0340: A1 E1 01                              mov ax, d0[2]
+[ 107]    0343: A3 F1 01                              mov d[2], ax
+[ 108]        :                                       
+[ 109]    0346: BF 00 00                              mov di, 0
+[ 110]        :                                       
+[ 111]    0349:                                       lap:
+[ 112]    0349: 8B F7                                 mov si, di
+[ 113]    034B:                                       NhoHon16:
+[ 114]    034B: 83 FF 10                              cmp di, 16
+[ 115]    034E: 7D 2B                                 jge NhoHon32
+[ 116]        :                                       
+[ 117]        :                                       ; F_low
+[ 118]    0350: A1 EF 01                              mov ax, d[0]
+[ 119]    0353: 33 06 EB 01                           xor ax, c[0]
+[ 120]    0357: 23 06 E7 01                           and ax, b[0]
+[ 121]    035B: 33 06 EF 01                           xor ax, d[0]
+[ 122]        :                                       
+[ 123]    035F: A3 F3 01                              mov F[0], ax
+[ 124]        :                                       
+[ 125]        :                                       ; F_high
+[ 126]    0362: A1 F1 01                              mov ax, d[2]
+[ 127]    0365: 33 06 ED 01                           xor ax, c[2]
+[ 128]    0369: 23 06 E9 01                           and ax, b[2]
+[ 129]    036D: 33 06 F1 01                           xor ax, d[2]
+[ 130]    0371: A3 F5 01                              mov F[2], ax
+[ 131]        :                                       
+[ 132]    0374: 89 36 F7 01                           mov g, si
+[ 133]        :                                       
+[ 134]    0378: E9 A2 00                              jmp Done
+[ 135]        :                                       
+[ 136]    037B:                                       NhoHon32:
+[ 137]    037B: 83 FF 20                              cmp di, 32
+[ 138]    037E: 7D 37                                 jge NhoHon48
+[ 139]        :                                       
+[ 140]        :                                       ; F_low
+[ 141]    0380: A1 EB 01                              mov ax, c[0]
+[ 142]    0383: 33 06 E7 01                           xor ax, b[0]
+[ 143]    0387: 23 06 EF 01                           and ax, d[0]
+[ 144]    038B: 33 06 EB 01                           xor ax, c[0]
+[ 145]        :                                       
+[ 146]    038F: A3 F3 01                              mov F[0], ax
+[ 147]        :                                       
+[ 148]        :                                       ; F_high
+[ 149]    0392: A1 ED 01                              mov ax, c[2]
+[ 150]    0395: 33 06 E9 01                           xor ax, b[2]
+[ 151]    0399: 23 06 F1 01                           and ax, d[2]
+[ 152]    039D: 33 06 ED 01                           xor ax, c[2]
+[ 153]        :                                       
+[ 154]    03A1: A3 F5 01                              mov F[2], ax
+[ 155]        :                                       
+[ 156]        :                                       ; phep nhan
+[ 157]    03A4: B8 05 00                              mov ax, 5
+[ 158]    03A7: F7 E6                                 mul si
+[ 159]    03A9: 40                                    inc ax
+[ 160]    03AA: B2 10                                 mov dl, 16
+[ 161]    03AC: F6 F2                                 div dl
+[ 162]    03AE: 8A C4                                 mov al, ah
+[ 163]    03B0: B4 00                                 mov ah, 0
+[ 164]    03B2: A3 F7 01                              mov g, ax
+[ 165]        :                                       
+[ 166]    03B5: EB 66                                 jmp Done
+[ 167]        :                                       
+[ 168]    03B7:                                       NhoHon48:
+[ 169]    03B7: 83 FF 30                              cmp di, 48
+[ 170]    03BA: 7D 31                                 jge NhoHon63
+[ 171]        :                                       
+[ 172]        :                                       ; F_low
+[ 173]    03BC: A1 E7 01                              mov ax, b[0]
+[ 174]    03BF: 33 06 EB 01                           xor ax, c[0]
+[ 175]    03C3: 33 06 EF 01                           xor ax, d[0]
+[ 176]        :                                       
+[ 177]    03C7: A3 F3 01                              mov F[0], ax
+[ 178]        :                                       
+[ 179]        :                                       ; F_high
+[ 180]    03CA: A1 E9 01                              mov ax, b[2]
+[ 181]    03CD: 33 06 ED 01                           xor ax, c[2]
+[ 182]    03D1: 33 06 F1 01                           xor ax, d[2]
+[ 183]        :                                       
+[ 184]    03D5: A3 F5 01                              mov F[2], ax
+[ 185]        :                                       
+[ 186]        :                                       ; phep nhan
+[ 187]    03D8: B8 03 00                              mov ax, 3
+[ 188]    03DB: F7 E6                                 mul si
+[ 189]    03DD: 05 05 00                              add ax, 5
+[ 190]    03E0: B2 10                                 mov dl, 16
+[ 191]    03E2: F6 F2                                 div dl
+[ 192]    03E4: 8A C4                                 mov al, ah
+[ 193]    03E6: B4 00                                 mov ah, 0
+[ 194]    03E8: A3 F7 01                              mov g, ax
+[ 195]        :                                       
+[ 196]    03EB: EB 30                                 jmp Done
+[ 197]        :                                       
+[ 198]    03ED:                                       NhoHon63:
+[ 199]        :                                       ; F_low
+[ 200]    03ED: A1 EF 01                              mov ax, d[0]
+[ 201]    03F0: F7 D0                                 not ax
+[ 202]    03F2: 0B 06 E7 01                           or ax, b[0]
+[ 203]    03F6: 33 06 EB 01                           xor ax, c[0]
+[ 204]        :                                       
+[ 205]    03FA: A3 F3 01                              mov F[0], ax
+[ 206]        :                                       
+[ 207]        :                                       ; F_high
+[ 208]    03FD: A1 F1 01                              mov ax, d[2]
+[ 209]    0400: F7 D0                                 not ax
+[ 210]    0402: 0B 06 E9 01                           or ax, b[2]
+[ 211]    0406: 33 06 ED 01                           xor ax, c[2]
+[ 212]        :                                       
+[ 213]    040A: A3 F5 01                              mov F[2], ax
+[ 214]        :                                       
+[ 215]    040D: B8 07 00                              mov ax, 7
+[ 216]    0410: F7 E6                                 mul si
+[ 217]    0412: B2 10                                 mov dl, 16
+[ 218]    0414: F6 F2                                 div dl
+[ 219]    0416: 8A C4                                 mov al, ah
+[ 220]    0418: B4 00                                 mov ah, 0
+[ 221]    041A: A3 F7 01                              mov g, ax
+[ 222]        :                                       
+[ 223]        :                                       ;========= F := F + A + K[i] + block[g] ==============
+[ 224]        :                                       
+[ 225]        :                                       ; tempResult = K[i] + block[g]
+[ 226]    041D:                                       Done:
+[ 227]    041D: 8B 36 F7 01                           mov si, g
+[ 228]    0421: D1 E6 D1 E6                           shl si, 2
+[ 229]    0425: 8B DF                                 mov bx, di
+[ 230]    0427: D1 E3 D1 E3                           shl bx, 2
+[ 231]        :                                       
+[ 232]        :                                       ; low 16-bit
+[ 233]    042B: 8B 47 40                              mov ax, K[bx]
+[ 234]    042E: 8A 94 93 01                           mov dl, block[si]
+[ 235]    0432: 8A B4 94 01                           mov dh, block[si + 1]
+[ 236]        :                                       
+[ 237]    0436: 03 C2                                 add ax, dx
+[ 238]    0438: A3 F9 01                              mov tempResult[0], ax
+[ 239]        :                                       
+[ 240]    043B: 8B 47 42                              mov ax, K[bx + 2]
+[ 241]    043E: 8A 94 95 01                           mov dl, block[si + 2]
+[ 242]    0442: 8A B4 96 01                           mov dh, block[si + 3]
+[ 243]        :                                       
+[ 244]    0446: 13 C2                                 adc ax, dx
+[ 245]    0448: A3 FB 01                              mov tempResult[2], ax
+[ 246]        :                                       
+[ 247]        :                                       ; tempResult + A
+[ 248]    044B: A1 E3 01                              mov ax, a[0]
+[ 249]    044E: 03 06 F9 01                           add ax, tempResult[0]
+[ 250]    0452: A3 F9 01                              mov tempResult[0], ax
+[ 251]        :                                       
+[ 252]    0455: A1 E5 01                              mov ax, a[2]
+[ 253]    0458: 13 06 FB 01                           adc ax, tempResult[2]
+[ 254]    045C: A3 FB 01                              mov tempResult[2], ax
+[ 255]        :                                       
+[ 256]        :                                       ; F = F + tempResult
+[ 257]    045F: A1 F3 01                              mov ax, F[0]
+[ 258]    0462: 03 06 F9 01                           add ax, tempResult[0]
+[ 259]    0466: A3 F3 01                              mov F[0], ax
+[ 260]        :                                       
+[ 261]    0469: A1 F5 01                              mov ax, F[2]
+[ 262]    046C: 13 06 FB 01                           adc ax, tempResult[2]
+[ 263]    0470: A3 F5 01                              mov F[2], ax
+[ 264]        :                                       
+[ 265]        :                                       ;============= A := D == D := C == C := B ============
+[ 266]    0473: A1 EF 01                              mov ax, d[0]
+[ 267]    0476: A3 E3 01                              mov a[0], ax
+[ 268]    0479: A1 F1 01                              mov ax, d[2]
+[ 269]    047C: A3 E5 01                              mov a[2], ax
+[ 270]        :                                       
+[ 271]    047F: A1 EB 01                              mov ax, c[0]
+[ 272]    0482: A3 EF 01                              mov d[0], ax
+[ 273]    0485: A1 ED 01                              mov ax, c[2]
+[ 274]    0488: A3 F1 01                              mov d[2], ax
+[ 275]        :                                       
+[ 276]    048B: A1 E7 01                              mov ax, b[0]
+[ 277]    048E: A3 EB 01                              mov c[0], ax
+[ 278]    0491: A1 E9 01                              mov ax, b[2]
+[ 279]    0494: A3 ED 01                              mov c[2], ax
+[ 280]        :                                       
+[ 281]        :                                       ;============= B = B + leftRotate(F, s[i]) =============
+[ 282]        :                                       ; quay F di s[i] bit
+[ 283]    0497: 8A 05                                 mov al, s[di]
+[ 284]    0499: A2 FD 01                              mov nBit, al
+[ 285]    049C: E8 1A 01                              call quay_nBit
+[ 286]        :                                       
+[ 287]    049F: A1 E7 01                              mov ax, b[0]
+[ 288]    04A2: 03 06 F3 01                           add ax, F[0]
+[ 289]    04A6: A3 E7 01                              mov b[0], ax
+[ 290]        :                                       
+[ 291]    04A9: A1 E9 01                              mov ax, b[2]
+[ 292]    04AC: 13 06 F5 01                           adc ax, F[2]
+[ 293]    04B0: A3 E9 01                              mov b[2], ax
+[ 294]        :                                       
+[ 295]    04B3: 47                                    inc di
+[ 296]    04B4: 83 FF 40                              cmp di, 64
+[ 297]    04B7: 74 03 E9 8D FE                        jnz lap
+[ 298]        :                                       
+[ 299]        :                                       ;======== Add this chunk's hash to result so far =========
+[ 300]        :                                       
+[ 301]        :                                       ;a0 = a0 + a
+[ 302]    04BC: A1 E3 01                              mov ax, a[0]
+[ 303]    04BF: 03 06 D3 01                           add ax, a0[0]
+[ 304]    04C3: A3 D3 01                              mov a0[0], ax
+[ 305]    04C6: A3 83 01                              mov output[0], ax
+[ 306]        :                                       
+[ 307]    04C9: A1 E5 01                              mov ax, a[2]
+[ 308]    04CC: 13 06 D5 01                           adc ax, a0[2]
+[ 309]    04D0: A3 D5 01                              mov a0[2], ax
+[ 310]    04D3: A3 85 01                              mov output[2], ax
+[ 311]        :                                       
+[ 312]        :                                       ;b0 = b0 + b
+[ 313]    04D6: A1 E7 01                              mov ax, b[0]
+[ 314]    04D9: 03 06 D7 01                           add ax, b0[0]
+[ 315]    04DD: A3 D7 01                              mov b0[0], ax
+[ 316]    04E0: A3 87 01                              mov output[4], ax
+[ 317]        :                                       
+[ 318]    04E3: A1 E9 01                              mov ax, b[2]
+[ 319]    04E6: 13 06 D9 01                           adc ax, b0[2]
+[ 320]    04EA: A3 D9 01                              mov b0[2], ax
+[ 321]    04ED: A3 89 01                              mov output[6], ax
+[ 322]        :                                       
+[ 323]        :                                       ;c0 = c0 + c
+[ 324]    04F0: A1 EB 01                              mov ax, c[0]
+[ 325]    04F3: 03 06 DB 01                           add ax, c0[0]
+[ 326]    04F7: A3 DB 01                              mov c0[0], ax
+[ 327]    04FA: A3 8B 01                              mov output[8], ax
+[ 328]        :                                       
+[ 329]    04FD: A1 ED 01                              mov ax, c[2]
+[ 330]    0500: 13 06 DD 01                           adc ax, c0[2]
+[ 331]    0504: A3 DD 01                              mov c0[2], ax
+[ 332]    0507: A3 8D 01                              mov output[10], ax
+[ 333]        :                                       
+[ 334]        :                                       ;d0 = d0 + d
+[ 335]    050A: A1 EF 01                              mov ax, d[0]
+[ 336]    050D: 03 06 DF 01                           add ax, d0[0]
+[ 337]    0511: A3 DF 01                              mov d0[0], ax
+[ 338]    0514: A3 8F 01                              mov output[12], ax
+[ 339]        :                                       
+[ 340]    0517: A1 F1 01                              mov ax, d[2]
+[ 341]    051A: 13 06 E1 01                           adc ax, d0[2]
+[ 342]    051E: A3 E1 01                              mov d0[2], ax
+[ 343]    0521: A3 91 01                              mov output[14], ax
+[ 344]        :                                       
+[ 345]    0524: E8 2D 00                              call xuatDuLieu
+[ 346]        :                                       
+[ 347]    0527: E8 B9 00                              call reset
+[ 348]    052A: E9 E3 FD                              jmp begin
+[ 349]    052D: B8 00 4C                              mov ax, 4c00h
+[ 350]    0530: CD 21                                 int 21h
+[ 351]        :                                       
+[ 352]        :                                       ; ========== Nhap DL =========
+[ 353]    0532:                                       nhapDuLieu Proc
+[ 354]        :                                       ; lea dx, msgIn
+[ 355]        :                                       ;    mov ah, 09h
+[ 356]        :                                       ;    int 21h
+[ 357]    0532: BE 5F 01                              mov si, offset msgIn
+[ 358]    0535: E8 FA 00                              call USART_Write_Str
+[ 359]        :                                       
+[ 360]    0538: BE 00 00                              mov si, 0
+[ 361]        :                                       
+[ 362]    053B:                                       Nhap:
+[ 363]        :                                       ; mov ah, 01h
+[ 364]        :                                       ;        int 21h
+[ 365]    053B: E8 DA 00                              call USART_Read
+[ 366]    053E: 88 84 6F 01                           mov input[si], al
+[ 367]    0542: 8A D8                                 mov bl, al
+[ 368]    0544: E8 DC 00                              call USART_Write
+[ 369]    0547: 8A C3                                 mov al, bl
+[ 370]    0549: 3C 0D                                 cmp al, 13
+[ 371]    054B: 74 06                                 jz  Thoat
+[ 372]        :                                       
+[ 373]    054D: 46                                    inc si
+[ 374]    054E: 83 FE 14                              cmp si, 20
+[ 375]    0551: 75 E8                                 jnz Nhap
+[ 376]        :                                       
+[ 377]    0553:                                       Thoat:
+[ 378]        :                                       
+[ 379]    0553: C3                                    ret
+[ 380]        :                                       nhapDuLieu EndP
+[ 381]        :                                       
+[ 382]        :                                       ; ========= Xuat DL ==========
+[ 383]    0554:                                       xuatDuLieu Proc
+[ 384]        :                                       ; lea dx, msgOut
+[ 385]        :                                       ;    mov ah, 09h
+[ 386]        :                                       ;    int 21h
+[ 387]    0554: BE 67 01                              mov si, offset msgOut
+[ 388]    0557: E8 D8 00                              call USART_Write_Str
+[ 389]        :                                       
+[ 390]    055A: BE 00 00                              mov si, 0
+[ 391]    055D: BF 00 00                              mov di, 0
+[ 392]    0560:                                       inByte:
+[ 393]    0560: 8A 9D 83 01                           mov bl, byte ptr output[di]
+[ 394]    0564: B9 02 00                              mov cx, 2
+[ 395]        :                                       
+[ 396]    0567:                                       hexLoop:
+[ 397]    0567: D0 C3 D0 C3 D0 C3 D0 C3               rol bl, 4
+[ 398]    056F: 8A D3                                 mov dl, bl
+[ 399]    0571: 80 E2 0F                              and dl, 0fh
+[ 400]    0574: 80 FA 09                              cmp dl, 9
+[ 401]    0577: 7F 05                                 jg kyTu ; dl <= 9
+[ 402]    0579: 80 C2 30                              add dl, '0'
+[ 403]    057C: EB 06                                 jmp inHex
+[ 404]        :                                       
+[ 405]    057E:                                       kyTu:
+[ 406]    057E: 80 EA 0A                              sub dl, 10
+[ 407]    0581: 80 C2 61                              add dl, 'a'
+[ 408]    0584:                                       inHex:
+[ 409]        :                                       ; mov ah, 0x2h
+[ 410]        :                                       ;            int 21h
+[ 411]    0584: 8A C2                                 mov al, dl
+[ 412]    0586: E8 9A 00                              call USART_Write
+[ 413]        :                                       
+[ 414]    0589: E2 DC                                 loop hexLoop
+[ 415]        :                                       
+[ 416]    058B: 46                                    inc si
+[ 417]    058C: 47                                    inc di
+[ 418]    058D: 83 FE 10                              cmp si, 16
+[ 419]        :                                       
+[ 420]    0590: 75 CE                                 jnz inByte
+[ 421]        :                                       
+[ 422]    0592: C3                                    ret
+[ 423]        :                                       xuatDuLieu EndP
+[ 424]        :                                       
+[ 425]        :                                       ;========= Tao Block =========
+[ 426]    0593:                                       taoBlock Proc
+[ 427]        :                                       
+[ 428]        :                                       ; Dem chieu dai cua input
+[ 429]    0593: BE 00 00                              mov si, 0
+[ 430]    0596:                                       dem:
+[ 431]    0596: 8A 84 6F 01                           mov al, input[si]
+[ 432]        :                                       
+[ 433]    059A: 3C 0D                                 cmp al, 13
+[ 434]    059C: 74 0A                                 jz dung
+[ 435]        :                                       
+[ 436]    059E: 88 84 93 01                           mov block[si], al
+[ 437]        :                                       
+[ 438]    05A2: 46                                    inc si
+[ 439]    05A3: 83 FE 14                              cmp si, 20
+[ 440]    05A6: 75 EE                                 jnz dem
+[ 441]        :                                       
+[ 442]    05A8:                                       dung:
+[ 443]    05A8: C6 84 93 01 80                        mov block[si], 80h
+[ 444]    05AD: 8B C6                                 mov ax, si
+[ 445]    05AF: D0 E0 D0 E0 D0 E0                     shl al, 3
+[ 446]        :                                       
+[ 447]    05B5: A2 CB 01                              mov block[56], al
+[ 448]        :                                       
+[ 449]    05B8: C3                                    ret
+[ 450]        :                                       taoBlock EndP
+[ 451]        :                                       
+[ 452]        :                                       ; ======== Quay bit ==========
+[ 453]        :                                       
+[ 454]    05B9:                                       quay_nBit Proc
+[ 455]    05B9: B9 00 00                              mov cx, 0
+[ 456]    05BC: 8A 0E FD 01                           mov cl, nBit
+[ 457]        :                                       
+[ 458]        :                                       ; low bit: AX, high bit: DX
+[ 459]    05C0: A1 F3 01                              mov ax, F[0]
+[ 460]    05C3: 8B 16 F5 01                           mov dx, F[2]
+[ 461]        :                                       
+[ 462]        :                                       
+[ 463]    05C7:                                       quay:
+[ 464]        :                                       ; dich trai dx va luu bit dich vao bl
+[ 465]    05C7: D1 E2                                 shl dx, 1
+[ 466]    05C9: B3 00                                 mov bl, 0
+[ 467]    05CB: 80 D3 00                              adc bl, 0
+[ 468]        :                                       
+[ 469]        :                                       ; dich trai ax va luu bit dich vao bh
+[ 470]    05CE: D1 E0                                 shl ax, 1
+[ 471]    05D0: B7 00                                 mov bh, 0
+[ 472]    05D2: 80 D7 00                              adc bh, 0
+[ 473]        :                                       
+[ 474]    05D5: 02 D7                                 add dl, bh
+[ 475]    05D7: 02 C3                                 add al, bl
+[ 476]        :                                       
+[ 477]    05D9: E2 EC                                 loop quay
+[ 478]        :                                       
+[ 479]    05DB: A3 F3 01                              mov F[0], ax
+[ 480]    05DE: 89 16 F5 01                           mov F[2], dx
+[ 481]        :                                       
+[ 482]    05E2: C3                                    ret
+[ 483]        :                                       quay_nBit EndP
+[ 484]        :                                       
+[ 485]    05E3:                                       reset Proc
+[ 486]    05E3: B9 14 00                              mov cx, 20
+[ 487]    05E6: BE 00 00                              mov si, 0
+[ 488]    05E9:                                       resetInput:
+[ 489]    05E9: C6 84 6F 01 00                        mov input[si], 0
+[ 490]    05EE: 46                                    inc si
+[ 491]    05EF: E2 F8                                 loop resetInput
+[ 492]        :                                       
+[ 493]    05F1: B9 10 00                              mov cx, 16
+[ 494]    05F4: BE 00 00                              mov si, 0
+[ 495]    05F7:                                       resetOutput:
+[ 496]    05F7: C7 84 83 01 00 00                     mov output[si], 0
+[ 497]    05FD: 46                                    inc si
+[ 498]    05FE: E2 F7                                 loop resetOutput
+[ 499]        :                                       
+[ 500]    0600: B9 40 00                              mov cx, 64
+[ 501]    0603: BE 00 00                              mov si, 0
+[ 502]    0606:                                       resetBlock:
+[ 503]    0606: C6 84 93 01 00                        mov block[si], 0
+[ 504]    060B: 46                                    inc si
+[ 505]    060C: E2 F8                                 loop resetBlock
+[ 506]        :                                       
+[ 507]    060E: C3                                    ret
+[ 508]        :                                       reset EndP
+[ 509]        :                                       
+[ 510]        :                                       ; =============== USART Function ==========
+[ 511]    060F:                                       USART_Init Proc
+[ 512]        :                                       ;Set up UART
+[ 513]    060F: B0 7D                                 mov al, 7Dh
+[ 514]    0611: E6 02                                 out USART_CMD, al
+[ 515]    0613: B0 07                                 mov al, 7h
+[ 516]    0615: E6 02                                 out USART_CMD, al
+[ 517]        :                                       
+[ 518]    0617: C3                                    ret
+[ 519]        :                                       USART_Init EndP
+[ 520]        :                                       
+[ 521]        :                                       ; Read a byte form USART to AL
+[ 522]    0618:                                       USART_Read Proc
+[ 523]    0618:                                       RL1:
+[ 524]    0618: E4 02                                 in al, USART_CMD
+[ 525]    061A: A8 02                                 test al, 2
+[ 526]    061C: 74 FA                                 JE RL1
+[ 527]    061E: E4 00                                 in al, USART_DATA
+[ 528]    0620: D0 E8                                 shr al, 1
+[ 529]        :                                       
+[ 530]    0622: C3                                    ret
+[ 531]        :                                       USART_Read EndP
+[ 532]        :                                       
+[ 533]        :                                       ; Write a byte from al to USART
+[ 534]    0623:                                       USART_Write Proc
+[ 535]    0623: 53                                    push bx
+[ 536]    0624: 8A D8                                 mov bl, al
+[ 537]    0626:                                       WL1:
+[ 538]    0626: E4 02                                 in al, USART_CMD
+[ 539]    0628: A8 01                                 test al, 1
+[ 540]    062A: 74 FA                                 JE WL1
+[ 541]    062C: 8A C3                                 mov al, bl
+[ 542]    062E: E6 00                                 out USART_DATA, al
+[ 543]    0630: 5B                                    pop bx
+[ 544]        :                                       
+[ 545]    0631: C3                                    ret
+[ 546]        :                                       USART_Write EndP
+[ 547]        :                                       
+[ 548]        :                                       ; Write a Sring to USART
+[ 549]    0632:                                       USART_Write_Str Proc
+[ 550]    0632:                                       swloop:
+[ 551]    0632: AC                                    lodsb
+[ 552]    0633: 0A C0                                 or al, al
+[ 553]    0635: 74 05                                 je swdone
+[ 554]    0637: E8 E9 FF                              call USART_Write
+[ 555]    063A: EB F6                                 jmp swloop
+[ 556]    063C:                                       swdone:
+[ 557]    063C: C3                                    ret
+[ 558]        :                                       
+[ 559]        :                                       USART_Write_Str EndP
+[ 560]        :                                       
+[ 561]        :                                       ;========================
+[ 562]        :                                       ;countLength Proc
+[ 563]        :                                       ;    push si
+[ 564]        :                                       ;
+[ 565]        :                                       ;    mov si, 0
+[ 566]        :                                       ;    count:
+[ 567]        :                                       ;        mov al, input[si]
+[ 568]        :                                       ;        cmp al, 13
+[ 569]        :                                       ;        jz xong
+[ 570]        :                                       ;        inc si
+[ 571]        :                                       ;
+[ 572]        :                                       ;    cmp si, 20
+[ 573]        :                                       ;    jnz count
+[ 574]        :                                       ;
+[ 575]        :                                       ;    xong:
+[ 576]        :                                       ;    xor ax, ax
+[ 577]        :                                       ;    mov ax, si
+[ 578]        :                                       ;    mov length, al
+[ 579]        :                                       ;
+[ 580]        :                                       ;    pop si
+[ 581]        :                                       ;    ret
+[ 582]        :                                       ;countLength EndP
+[ 583]        :                                       ;
+[ 584]        :                                       ;hexL Proc
+[ 585]        :                                       ;    push cx
+[ 586]        :                                       ;
+[ 587]        :                                       ;    mov bl, length
+[ 588]        :                                       ;        mov cx, 2
+[ 589]        :                                       ;
+[ 590]        :                                       ;        l:
+[ 591]        :                                       ;            rol bl, 4
+[ 592]        :                                       ;            mov dl, bl
+[ 593]        :                                       ;            and dl, 0fh
+[ 594]        :                                       ;            cmp dl, 9
+[ 595]        :                                       ;            jg character ; dl <= 9
+[ 596]        :                                       ;            add dl, '0'
+[ 597]        :                                       ;            jmp x
+[ 598]        :                                       ;
+[ 599]        :                                       ;        character:
+[ 600]        :                                       ;            sub dl, 10
+[ 601]        :                                       ;            add dl, 'a'
+[ 602]        :                                       ;        x:
+[ 603]        :                                       ;            mov al, dl
+[ 604]        :                                       ;            call USART_Write
+[ 605]        :                                       ;
+[ 606]        :                                       ;        loop l
+[ 607]        :                                       ;        mov al, ' '
+[ 608]        :                                       ;        call USART_Write
+[ 609]        :                                       ;        pop cx
+[ 610]        :                                       ;        ret
+[ 611]        :                                       ;hexL EndP
+[ 612]        :                                       ; ================END PROG=================
+[ 613]        :                                       ends
+[ 614]        :                                       end start
+[ 615]        :                                       
+[ 616]        :                                       
+ 
+===================================================================================================
+ 
+EXE HEADER - bytes from 0000 to 01FF inclusive.
+
+0000: 4D      -   exe signature (M)
+0001: 5A      -   exe signature (Z)
+0002: 3D      -   bytes on last page (l.byte)
+0003: 00      -   bytes on last page (h.byte)
+0004: 05      -   512 byte pages in file (l.byte)
+0005: 00      -   512 byte pages in file (h.byte)
+0006: 01      -   relocations (l.byte)
+0007: 00      -   relocations (h.byte)
+0008: 20      -   paragraphs in header (l.byte)
+0009: 00      -   paragraphs in header (h.byte)
+000A: 00      -   minimum memory (l.byte)
+000B: 00      -   minimum memory (h.byte)
+000C: FF      -   maximum memory (l.byte)
+000D: FF      -   maximum memory (h.byte)
+000E: 20      -   SS - stack segment (l.byte)
+000F: 00      -   SS - stack segment (h.byte)
+0010: 00      -   SP - stack pointer (l.byte)
+0011: 01      -   SP - stack pointer (h.byte)
+0012: AA      -   check sum (l.byte)
+0013: A4      -   check sum (h.byte)
+0014: 00      -   IP - instruction pointer (l.byte)
+0015: 00      -   IP - instruction pointer (h.byte)
+0016: 30      -   CS - code segment (l.byte)
+0017: 00      -   CS - code segment (h.byte)
+0018: 1E      -   relocation table adress (l.byte)
+0019: 00      -   relocation table adress (h.byte)
+001A: 00      -   overlay number (l.byte)
+001B: 00      -   overlay number (h.byte)
+001C: 01      -   signature (l.byte)
+001D: 00      -   signature (h.byte)
+001E: 01      -   relocation table - offset inside segment (l.byte)
+001F: 00      -   relocation table - offset inside segment (h.byte)
+0020: 30      -   relocation table - segment anchor (l.byte)
+0021: 00      -   relocation table - segment anchor (h.byte)
+0022 to 01FF  -   reserved relocation area  (00) 
+
+
+
+
+===================================================================================================

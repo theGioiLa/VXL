@@ -1,0 +1,96 @@
+\documentclass[../report.tex]{subfiles}
+\begin{document}
+\subsection{Giới thiệu vấn đề}
+Một trung tâm dữ liệu được triển khai trong thực tế phải đạt được các tiêu chuẩn chung cơ bản đó là TIA-942A. Đây là tài liệu được coi là chuẩn chung cho mọi hệ thống trung tâm dữ liệu trên toàn thế giới. Trong việc triển khai trung tâm dữ liệu trong thực tế, bài toán mà chúng ta quan tâm đó là tối thiểu hóa chi phí thiết lập. Cụ thể ta có thể mô tả bài toán như sau:
+Xây dựng mạng liên kết với kích thước lớn nhất có thể với điều kiện vùng triển khai bị giới hạn trong một phạm vi diện tích biết trước và chi phí triển khai mạng liên kết không vượt quá một lượng cố đinh cho trước.
+
+\paragraph*{}
+Trước khi bắt đầu mô hình hóa vấn đề, chúng ta cần tìm hiểu một số tiêu chuẩn TIA-942 cần quan tâm liên quan trực tiếp với vấn đề đã đề đang đề cập tới. Những tiêu chuẩn đó là:
+\begin{itemize}
+    \item Chiều rộng của tủ Rack: 0,6m.
+    \item Chiều dài của tủ Rack: 2,1m.
+    \item Chiều cao của tủ Rack: 2,42m.
+    \item Khoảng cách giữa hai tủ Rack theo chiều dài: 1,2m.
+    \item Khoảng cách giữa hai tủ Rack theo chiều rộng: 1m.
+    \item Dây nối giữa các switch/host giữa các tủ Rack được đi dây theo các góc vuông, tính theo khoảng cách Manhattan.
+    \item Trong một tủ Rack sẽ chứa được tối đa 8 switch, mỗi switch có thể kết nối với tối đa 8 host.
+\end{itemize}
+
+\subsection{Mô hình hóa bài toán}
+\paragraph*{}
+Với bài toán này ra đã biết trước được diện tích $S_i$ ($i = 1 \rightarrow N$) của mỗi sàn và chi phí tối đa được phép sử dụng.
+Các tủ Rack được phân bố vào các phòng theo chiến lược lấp đầy, nghĩa là khi một phòng đã chứa được tối đa số rack có thể thì ta sẽ cần phân bố số rack còn lại vào các sàn tiếp theo dựa trên cách thức đó. Sau khi đã phân bố rack, ta cần quan tâm tới cách thức đưa các node của topo vào các rack sao cho phù hợp. Dựa vào thực nghiệm của nhóm nghiên cứu đã tìm được hai giải pháp có thể mang lại sự tối ưu đó là đổ tràn và đổ đều:
+\begin{itemize}
+        \item Đổ tràn là triển khai lần lượt các node mạng của topo vào tuần tự từng tủ rack theo lần lượt các phòng có diện tích $S_i$
+        \item Đổ đều là thực hiện chia đều số node mạng của topo vào các phòng có diện tích $S_i$
+\end{itemize}
+
+Để kết nối các sàn của trung tâm dữ liệu với nhau, ta sử dụng Highway với các đặc tính sau:
+\begin{itemize}
+    \item Giữa hai phòng bất kì luôn có một Highway để đảm bảo tính liên thông giữa chúng.
+    \item Các node nằm ở hai phòng khác nhau mà có liên kết với nhau, thì dây cáp kết nối chúng nhất định phải đi qua Highway.
+    \item Vị trí đặt Highway được cho là tối ưu đó là ở trung tâm của vùng phân bố Rack.
+\end{itemize}
+\subsubsection{Xác định chi phí}
+Ở đây ta xét các chi phí cơ bản để triển khai một hệ thống trung tâm dữ liệu, bao gồm: chi phí tủ Rack, chi phí switch và chi phí cáp nối. Trong đó chi phí cáp nối là yếu tố phức tạp cần khảo sát. Vì tổng chiều dài dây cáp có liên quan rất lớn đến chiến lược triển khai topo mạng vào diện tích của trung tâm dữ liệu, cũng như số lượng Highway, chiều dài và vị trí đặt các Highway. 
+
+\subsubsection{Khảo sát và đánh giá chi phí cable length}
+\paragraph*{}Như đã biết, trong một trung tâm dữ liệu sự kết nối giữa hai rack với nhau thực chất là sự kết nối giữa các switch/host trong hai rack với nhau. Do vậy ta cần toạ độ hóa được các switch này để có thể tính toán được total cable length.
+\paragraph*{} Với một số lượng node m cho trước cùng với chiến lược ấn định là đổ tràn hoặc đổ đều và topo của mạng, ,ta có thể xác định được total cable length như sau:
+\begin{itemize}
+    \item Tọa độ của một node được xác định theo 4 tham số đó là (x, y, z, f):
+        \begin{itemize}
+        \item x, y là tọa độ lưới của rack có chứa node trong sàn chứa rack đó.
+        \item z là chiều cao của node so với sàn.
+        \item f là chỉ số sàn chứa node này ($f = 1 \rightarrow N$)
+        \end{itemize}
+        Ở đây x, y, f là các số nguyên dương.
+
+    \item Từ topo của mạng ta xác định được một ma trận 2 chiều với mục đích lưu trữ thông tin về các kết nối giữa các node của mạng:
+        \begin{itemize}
+            \item w(i, j) = 1: node i và node j có liên kết trực tiếp với nhau.
+            \item w(i, j) = 0: node j và node j không có liên kết với nhau trực tiếp.
+        \end{itemize}
+
+    \item Ta xây dựng thêm một ma trận 2 chiều d để lưu thông tin về khoảng cách giữa hai node i, j bất kì. Với mỗi cặp node i, j bất kì, sẽ có 3 trường hợp có thể xảy ra:
+        \begin{itemize}
+            \item i, j nằm trên cùng một rack:
+                \begin{equation}
+                    d(i, j) = |z_i - z_j|
+                \end{equation}
+            \item i, j nằm khác rack nhưng cùng một sàn($f_i = f_j$): 
+                \begin{equation}
+                    d(i, j) = |x_i - x_j| + |y_i - y_j| + z_i + z_j
+                \end{equation}
+            \item i, j nằm khác rack và khác sàn:
+                \begin{eqnarray*}
+                    d(i, j) & =  & |x_i - x_{Highway(f_i)}| + |y_i - y_{Highway(f_i)}| + z_i + \\
+                    &    & |x_j - x_{Highway(f_j)}| + |y_j - y_{Highway(f_j)}| + z_j + L_{Highway}	 
+                \end{eqnarray*}
+                Với chiều dài Highway nối giữa sàn $f_i$ và sàn $f_j$ đó là $L_{Highway}$ và tọa độ của đầu Highway ở sàn $f_i$ là ($x_{Highway(f_i)}, y_{Highway(f_i)}, 0, f_i$), sàn $f_j$ là ($x_{Highway(f_j)}, y_{Highway(f_j)}, 0, f_j$)
+        \end{itemize}
+
+    \item Khi đó công thức tính cable length là:
+        \begin{equation} \label{cb}
+            Cable Length = \sum_{i = 1}^m\sum_{j = 1}^mw(i,j).d(i, j)
+        \end{equation}
+\end{itemize}
+Cuối cùng ta thu được bài toán như sau: Với vùng diện tích và chi phí tối đa để triển khai trung tâm dữ liệu là biết trước. Kích thước của mạng liên kết mà bên chủ đầu tư mong muốn là $n_0$. Đồng thời sử dụng chiến lược đổ tràn hoặc đổ đầy, hãy tìm:
+\begin{itemize}
+    \item Kích thước mạng liên kết là lớn nhất có thể với các ràng buộc trên
+    \item Topo đước sử dụng khi đó.
+\end{itemize}
+
+\subsection{Đề xuất hướng giải quyết}
+Giả sử sau khi trừ đi chi phí cho rack thì ta sẽ có chi phí tối đa dành cho node(switch/host) và cable length là $C_0$. Tập topo được sử dụng đã xác định trước, do đó ta cần tính toán xem với topo nào thì kết quả thu được là gần nhất với mong muốn đã đặt ra. Việc tính toán đó được thực hiện như sau:
+\begin{itemize}
+    \item Với mỗi số lượng node n, ta xác định được cable length (CB) tương ứng dựa theo công thức \eqref{cb}
+    \item Sau đó so sánh cost = (n.$cost_{node}$ + CB.$cost_{link}$) với $C_0$:
+        \begin{itemize}
+            \item Nếu cost > $C_0$ thì ghi nhận số lượng node max đối với topo đang xét là n - 1.
+            \item Nếu cost < $C_0$ thì tiếp tục tăng n cho tới khi đạt được cost > $C_0$.
+            \item Nếu cost = $C_0$ thì số lượng node max sẽ là n.
+        \end{itemize}
+\end{itemize}
+Sau khi đã có được số lượng node max ứng với mỗi topo, ta sẽ chọn topo mà có số lượng node lớn nhất trong số đó. Và đó là kết quả mà ta cần tìm.
+\end{document}

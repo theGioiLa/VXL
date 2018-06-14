@@ -1,0 +1,64 @@
+< THE SYMBOL TABLE >  loop.exe  --  emu8086 assembler version: 4.08 
+===================================================================================================
+Name                     	Offset    	Size      	Type      	Segment   
+===================================================================================================
+DATA                     	00000     	-5        	SEGMENT   	(ITSELF)  
+S                        	00000     	1         	VAR       	data      
+K                        	00040     	2         	VAR       	data      
+WELCOME                  	00140     	1         	VAR       	data      
+MSGIN                    	0015F     	1         	VAR       	data      
+MSGOUT                   	00167     	1         	VAR       	data      
+INPUT                    	0016F     	1         	VAR       	data      
+OUTPUT                   	00183     	2         	VAR       	data      
+BLOCK                    	00193     	1         	VAR       	data      
+A0                       	001D3     	2         	VAR       	data      
+B0                       	001D7     	2         	VAR       	data      
+C0                       	001DB     	2         	VAR       	data      
+D0                       	001DF     	2         	VAR       	data      
+A                        	001E3     	2         	VAR       	data      
+B                        	001E7     	2         	VAR       	data      
+C                        	001EB     	2         	VAR       	data      
+D                        	001EF     	2         	VAR       	data      
+F                        	001F3     	2         	VAR       	data      
+G                        	001F7     	2         	VAR       	data      
+TEMPRESULT               	001F9     	2         	VAR       	data      
+NBIT                     	001FD     	1         	VAR       	data      
+STACK                    	00020     	-5        	SEGMENT   	(ITSELF)  
+CODE                     	00030     	-5        	SEGMENT   	(ITSELF)  
+START                    	00000     	-1        	LABEL     	code      
+BEGIN                    	00010     	-1        	LABEL     	code      
+LAP                      	00049     	-1        	LABEL     	code      
+NHOHON16                 	0004B     	-1        	LABEL     	code      
+NHOHON32                 	0007B     	-1        	LABEL     	code      
+NHOHON48                 	000B7     	-1        	LABEL     	code      
+NHOHON63                 	000ED     	-1        	LABEL     	code      
+DONE                     	0011D     	-1        	LABEL     	code      
+NHAPDULIEU               	00232     	-1        	NEAR      	code      
+NHAP                     	0023B     	-1        	LABEL     	code      
+THOAT                    	00253     	-1        	LABEL     	code      
+XUATDULIEU               	00254     	-1        	NEAR      	code      
+INBYTE                   	00260     	-1        	LABEL     	code      
+HEXLOOP                  	00267     	-1        	LABEL     	code      
+KYTU                     	0027E     	-1        	LABEL     	code      
+INHEX                    	00284     	-1        	LABEL     	code      
+TAOBLOCK                 	00293     	-1        	NEAR      	code      
+DEM                      	00296     	-1        	LABEL     	code      
+DUNG                     	002A8     	-1        	LABEL     	code      
+QUAY_NBIT                	002B9     	-1        	NEAR      	code      
+QUAY                     	002C7     	-1        	LABEL     	code      
+RESET                    	002E3     	-1        	NEAR      	code      
+RESETINPUT               	002E9     	-1        	LABEL     	code      
+RESETOUTPUT              	002F7     	-1        	LABEL     	code      
+RESETBLOCK               	00306     	-1        	LABEL     	code      
+USART_INIT               	0030F     	-1        	NEAR      	code      
+USART_READ               	00318     	-1        	NEAR      	code      
+RL1                      	00318     	-1        	LABEL     	code      
+USART_WRITE              	00323     	-1        	NEAR      	code      
+WL1                      	00326     	-1        	LABEL     	code      
+USART_WRITE_STR          	00332     	-1        	NEAR      	code      
+SWLOOP                   	00332     	-1        	LABEL     	code      
+SWDONE                   	0033C     	-1        	LABEL     	code      
+===================================================================================================
+[ 6/13/2018  --  10:15:56 AM ] 
+< END >
+ 
